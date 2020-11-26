@@ -78,7 +78,7 @@ const getAllReservations = function(guest_id, limit = 10) {
   return pool.query(`
   SELECT properties.*, reservations.*, avg(rating) as average_rating
   FROM reservations
-  JOIN properties ON reservations.property_id = properties.id
+  LEFT JOIN properties ON reservations.property_id = properties.id
   JOIN property_reviews ON properties.id = property_reviews.property_id 
   WHERE reservations.guest_id = $1
   AND reservations.end_date < now()::date
@@ -117,7 +117,7 @@ const getAllProperties = function(options, limit = 10) {
   let queryString = `
   SELECT properties.*, avg(property_reviews.rating) as average_rating
   FROM properties
-  JOIN property_reviews ON properties.id = property_id
+  FULL OUTER JOIN property_reviews ON properties.id = property_id
   `;
 
   // 3
@@ -181,7 +181,7 @@ const getAllProperties = function(options, limit = 10) {
   `;
 
   // 5
-  console.log("this is log ", queryString, queryParams);
+  // console.log("this is log ", queryString, queryParams);
 
   // 6
   return pool.query(queryString, queryParams)
@@ -191,16 +191,41 @@ const getAllProperties = function(options, limit = 10) {
 
 exports.getAllProperties = getAllProperties;
 
+
+
+
+const addProperty = function(property) {
+
+  const props = Object.keys(property);
+  const vals = Object.values(property);
+
+  let queryString = `
+  INSERT INTO properties (
+  `;
+
+  for (let key of props) {
+    queryString += `${key}, ` 
+  }
+
+  queryString = queryString.slice(0, -2);
+
+  queryString += `) 
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+  RETURNING *;`;
+
+  console.log("this is string: ", queryString, vals);
+
+  return pool.query(queryString, vals)
+  .then(res => res.rows[0])
+  .catch(err => null);
+}
+
 /**
  * Add a property to the database
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
-const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
-}
+
+
 exports.addProperty = addProperty;
 
