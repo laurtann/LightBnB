@@ -35,10 +35,6 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 
-// const getUserWithId = function(id) {
-//   return Promise.resolve(users[id]);
-// }
-
 // Correct
 const getUserWithId = function(id) {
   return pool.query(`
@@ -56,19 +52,7 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 
-// addUser
-// Accepts a user object that will have a name, email, and hashed password property.
-// This function should insert the new user into the database.
-// It will return a promise that resolves with the new user object. This object should contain the user's id after it's been added to the database.
-// Add RETURNING *; to the end of an INSERT query to return the objects that were inserted. This is handy when you need the auto generated id of an object you've just added to the database.
-
-// const addUser =  function(user) {
-//   const userId = Object.keys(users).length + 1;
-//   user.id = userId;
-//   users[userId] = user;
-//   return Promise.resolve(user);
-// }
-
+ //Correct
 const addUser =  function(user) {
   return pool.query(`
   INSERT INTO users (name, email, password)
@@ -124,14 +108,3 @@ const addProperty = function(property) {
 }
 exports.addProperty = addProperty;
 
-
-// getUserWithEmail
-// Accepts an email address and will return a promise.
-// The promise should resolve with the user that has that email address, or null if that user does not exist.
-// getUserWithId
-// Will do the same as getUserWithEmail, but using the user's id instead of email.
-// addUser
-// Accepts a user object that will have a name, email, and hashed password property.
-// This function should insert the new user into the database.
-// It will return a promise that resolves with the new user object. This object should contain the user's id after it's been added to the database.
-// Add RETURNING *; to the end of an INSERT query to return the objects that were inserted. This is handy when you need the auto generated id of an object you've just added to the database.
